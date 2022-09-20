@@ -7,7 +7,7 @@ public class IKNetworkManager : MonoBehaviour
 {
     // Start is called before the first frame update
     public bool isAtStartup = true;
-    Networkin
+    
     void Start()
     {
         
