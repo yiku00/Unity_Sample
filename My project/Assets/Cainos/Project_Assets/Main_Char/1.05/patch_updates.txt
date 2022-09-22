@@ -1,0 +1,34 @@
+updates
+
+1.05
+
+.aeprite template added so you can alter or remove layers:
+		hood
+		cape *
+		hair tuft
+		pants
+		shoes
+		shirt + tunic 
+		sword
+NEW run profile animation, template, character, arns, torso
+NEW north facing harm animation, both template and character updated
+south facing animations have layers for face options
+hoods replacecd with 2021 template versions for north facing animations
+hoods swapped and flipped for better looks in walk, run, swing south animations
+new organization of .xcf, baldy, template, and costumed layers created with sword flash and hair tuft as accessory layeres
+default composite character no longer includes hair tuft but it's available as a layer in the .xcf and png
+.xcf in indexed mode to get rid of palette deviations
+some limbs have been repositioned
+dust effect removed until a better quality is produced
+included preview animations for 2.01 modern outfit in .gif form
+
+
+notes
+
+Trying out shaded background limbs on the new run animation template, but costume is consistent
+shirt + tunic will be separate layers in a future release
+cape requires small alterations to work without short for now
+A lot of elements from the 2021 template were borrowed
+looking to write some hacks to use less frames for various animations
+going back through my concepts from older template versions for updates to suggest to theoretical community
+some time will be spent re-arranging and possiby re-titling the product page
