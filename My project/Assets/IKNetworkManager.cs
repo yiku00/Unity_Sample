@@ -1,13 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-using System;
-using System.IO;
 using System.Net.Sockets;
 using System.Net;
-using System.Runtime.Serialization.Formatters.Binary;
-using UnityEditor.PackageManager;
 
 public class IKNetworkManager : MonoBehaviour
 {
@@ -21,7 +16,7 @@ public class IKNetworkManager : MonoBehaviour
     {
         InitClientSocket();
         //StartCoroutine(test());
-
+        
         test();
     }
     
@@ -52,7 +47,7 @@ public class IKNetworkManager : MonoBehaviour
         }
     }
 
-    public void Send(byte[] packet)
+    public void SendPacket(byte[] packet)
     {
         if (clientSocket == null)
         {
@@ -84,6 +79,8 @@ public class IKNetworkManager : MonoBehaviour
         }
 
     }
+
+    [System.Obsolete]
     public IEnumerator WWW_WebRequestGet()
     {
         string url = targetURL;
@@ -128,6 +125,7 @@ public class IKNetworkManager : MonoBehaviour
             Debug.Log("Error From Server");
         }
     }
+    [System.Obsolete]
     public IEnumerator WWW_WebRequestPost()
     {
         string url = "";
@@ -152,6 +150,7 @@ public class IKNetworkManager : MonoBehaviour
     public void test()
     {
         // serialize
+        
         W_NoticeInfoReq.W_NoticeInfoReq req = new W_NoticeInfoReq.W_NoticeInfoReq() { };
 
         System.IO.MemoryStream reqStream = new System.IO.MemoryStream();
@@ -164,7 +163,7 @@ public class IKNetworkManager : MonoBehaviour
         reqStream.Read(result, 0, result.Length);
         
         byte[] buffer = reqStream.GetBuffer();
-        Send(result);
+        SendPacket(result);
     }
 
 }

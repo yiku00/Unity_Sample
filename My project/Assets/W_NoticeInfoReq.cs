@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 // Generated from: W_NoticeInfoReq.proto
-
 namespace W_NoticeInfoReq
 {
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"W_NoticeInfoReq")]
