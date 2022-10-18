@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System.Net.Sockets;
 using System.Net;
+using System.IO;
 
 public class IKNetworkManager : MonoBehaviour
 {
@@ -10,8 +11,18 @@ public class IKNetworkManager : MonoBehaviour
     public bool isAtStartup = true;
     static string targetURL = "http://192.168.0.161:8200/poker_server/gateway_servlet";     // 내부 서버
     private Socket clientSocket = null;
+    private TcpClient ClientTCPSocket = null;
+    private NetworkStream stream;
+    private StreamWriter STWriter;
+    private StreamReader STReader;
+    bool IsSocketReady = false;
+
     static string DefaultServerIP = "192.168.0.161";
     static int DefaultServerPort = 8200;
+
+    static string ClientIP = "";
+    static int ClientPort = 0;
+
     void Start()
     {
         InitClientSocket();
@@ -19,18 +30,36 @@ public class IKNetworkManager : MonoBehaviour
         
         test();
     }
+
+    void Update()
+    {
+        if(IsSocketReady && stream.DataAvailable)
+        {
+            //There is Some Data From Server
+            string data = STReader.ReadLine();
+            if(data != null)
+            {
+                //Handle Data From Server
+                Debug.Log("Data From Server = " + data);
+            }
+        }
+    }
     
     private void InitClientSocket()
     {
-        this.clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        IPAddress serverIPAdress = IPAddress.Parse(DefaultServerIP);
-        IPEndPoint serverEndPoint = new IPEndPoint(serverIPAdress, DefaultServerPort);
-
         //서버로 연결 요청
         try
         {
             Debug.Log("Connecting to Server");
+            this.clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            IPAddress serverIPAdress = IPAddress.Parse(DefaultServerIP);
+            IPEndPoint serverEndPoint = new IPEndPoint(serverIPAdress, DefaultServerPort);
             this.clientSocket.Connect(serverEndPoint);
+            this.ClientTCPSocket = new TcpClient(DefaultServerIP, DefaultServerPort);
+            stream = ClientTCPSocket.GetStream();
+            STWriter = new StreamWriter(stream);
+            STReader = new StreamReader(stream);
+            IsSocketReady = true;
         }
         catch (SocketException e)
         {
@@ -43,21 +72,33 @@ public class IKNetworkManager : MonoBehaviour
         if (this.clientSocket != null)
         {
             this.clientSocket.Close();
+            this.STWriter.Close();
+            this.STReader.Close();
+
+            this.STWriter = null;
+            this.STReader = null;
             this.clientSocket = null;
+
+            IsSocketReady = false;
         }
     }
 
     public void SendPacket(byte[] packet)
     {
-        if (clientSocket == null)
+        if (!IsSocketReady)
         {
+            Debug.Log("Socket Is Null");
             return;
         }
+
         byte[] sendData = (packet);
         byte[] prefSize = new byte[1];
         prefSize[0] = (byte)sendData.Length;    //버퍼의 가장 앞부분에 이 버퍼의 길이에 대한 정보가 있는데 이것을 
+        Debug.Log("Packet To Send ="+ packet.ToString());
         clientSocket.Send(prefSize);    //먼저 보낸다.
         clientSocket.Send(sendData);
+        STWriter.Write(sendData);
+        STWriter.Flush();
 
     }
 

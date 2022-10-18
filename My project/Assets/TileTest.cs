@@ -114,10 +114,10 @@ public class TileTest : MonoBehaviour
                 Vector3Int v3Int = new Vector3Int(x, y, 0);
 
                 //타일 색 바꿀 때 이게 있어야 하더군요
-                this.tilemap.SetTileFlags(v3Int, TileFlags.None);
+               // this.tilemap.SetTileFlags(v3Int, TileFlags.None);
 
                 //타일 색 바꾸기
-                this.tilemap.SetColor(v3Int, (Color.red));
+              //  this.tilemap.SetColor(v3Int, (Color.red));
 
                 Debug.Log("Current Cell's Loc = " + this.tilemap.CellToLocal(v3Int));
                 
