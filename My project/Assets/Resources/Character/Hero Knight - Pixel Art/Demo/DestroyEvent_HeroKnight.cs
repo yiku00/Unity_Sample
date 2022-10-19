@@ -10,4 +10,6 @@ public class DestroyEvent_HeroKnight : MonoBehaviour
     {
         Destroy(gameObject);
     }
+
+
 }

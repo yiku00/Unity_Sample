@@ -30,6 +30,7 @@ public class PrototypeHeroDemo : MonoBehaviour {
         m_audioSource = GetComponent<AudioSource>();
         m_audioManager = AudioManager_PrototypeHero.instance;
         m_groundSensor = transform.Find("GroundSensor").GetComponent<Sensor_Prototype>();
+        SetupSoundFile();
     }
 
     // Update is called once per frame
@@ -116,6 +117,16 @@ public class PrototypeHeroDemo : MonoBehaviour {
     // All dust effects spawns on the floor
     // dustXoffset controls how far from the player the effects spawns.
     // Default dustXoffset is zero
+    private void SetupSoundFile()
+    {
+        m_audioManager.AddSound("Character/Prototype_Hero_Demo/Audio/Footstep1", "Footstep");
+        m_audioManager.AddSound("Character/Prototype_Hero_Demo/Audio/Footstep2", "Footstep");
+        m_audioManager.AddSound("Character/Prototype_Hero_Demo/Audio/Footstep3", "Footstep");
+        m_audioManager.AddSound("Character/Prototype_Hero_Demo/Audio/Footstep1", "RunStop");
+        m_audioManager.AddSound("Character/Prototype_Hero_Demo/Audio/Jump", "Jump");
+        m_audioManager.AddSound("Character/Prototype_Hero_Demo/Audio/Landing", "Landing");
+    }
+
     void SpawnDustEffect(GameObject dust, float dustXOffset = 0)
     {
         if (dust != null)

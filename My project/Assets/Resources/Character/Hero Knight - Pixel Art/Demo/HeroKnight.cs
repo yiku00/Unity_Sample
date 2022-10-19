@@ -44,9 +44,16 @@ public class HeroKnight : MonoBehaviour {
 
         m_audioManager = AudioManager_PrototypeHero.instance;
 
-        m_RunStopDust = Instantiate(Resources.Load<GameObject>("Character/Prototype_Hero_Demo/Demo/RunStopDust.prefab"));
-        m_JumpDust = Instantiate(Resources.Load<GameObject>("Character/Prototype_Hero_Demo/Demo/JumpDust.prefab"));
-        m_LandingDust = Instantiate(Resources.Load<GameObject>("Character/Prototype_Hero_Demo/Demo/LandingDust.prefab"));
+        
+        m_RunStopDust = Resources.Load<GameObject>("Character/Prototype_Hero_Demo/Demo/RunStopDust");
+        m_JumpDust = Resources.Load<GameObject>("Character/Prototype_Hero_Demo/Demo/JumpDust");
+        m_LandingDust = Resources.Load<GameObject>("Character/Prototype_Hero_Demo/Demo/LandingDust");
+        Instantiate(m_RunStopDust);
+        Instantiate(m_JumpDust);
+        Instantiate(m_LandingDust);
+
+        SetupSoundFile();
+
     }
 
     // Update is called once per frame
@@ -152,6 +159,7 @@ public class HeroKnight : MonoBehaviour {
             m_rolling = true;
             m_animator.SetTrigger("Roll");
             m_body2d.velocity = new Vector2(m_facingDirection * m_rollForce, m_body2d.velocity.y);
+
         }
             
 
@@ -225,6 +233,10 @@ public class HeroKnight : MonoBehaviour {
         float dustXOffset = 0.6f;
         SpawnDustEffect(m_RunStopDust, dustXOffset);
     }
+    void AE_Attack()
+    {
+        m_audioManager.PlaySound("Attack");
+    }
 
     void AE_footstep()
     {
@@ -243,5 +255,43 @@ public class HeroKnight : MonoBehaviour {
         m_audioManager.PlaySound("Landing");
         // Spawn Dust
         SpawnDustEffect(m_LandingDust);
+    }
+    void AE_death()
+    {
+        m_audioManager.PlaySound("Death");
+    }
+
+    void AE_hurt()
+    {
+        m_audioManager.PlaySound("Hurt");
+    }
+
+    void AE_Block()
+    {
+        m_audioManager.PlaySound("Block");
+    }
+
+    void AE_Evade()
+    {
+        m_audioManager.PlaySound("Evade");
+    }
+
+    private void SetupSoundFile()
+    {
+        m_audioManager.AddSound("Character/Prototype_Hero_Demo/Audio/Footstep1", "Footstep");
+        m_audioManager.AddSound("Character/Prototype_Hero_Demo/Audio/Footstep2", "Footstep");
+        m_audioManager.AddSound("Character/Prototype_Hero_Demo/Audio/Footstep3", "Footstep");
+        m_audioManager.AddSound("Character/Prototype_Hero_Demo/Audio/Footstep1", "RunStop");
+        m_audioManager.AddSound("Character/Prototype_Hero_Demo/Audio/Jump", "Jump");
+        m_audioManager.AddSound("Character/Prototype_Hero_Demo/Audio/Landing", "Landing");
+        m_audioManager.AddSound("Sound/Blades&Bludgeonings-Free/Swing1-Free-1", "Attack");
+        m_audioManager.AddSound("Sound/Blades&Bludgeonings-Free/Swing4-Free-1", "Attack");
+        m_audioManager.AddSound("Sound/Voice_Male/Voice_Male_Pain/Voice_Male_V2_Pain_Mono_04", "Death");
+        m_audioManager.AddSound("Sound/Voice_Male/Voice_Male_Pain/Voice_Male_V1_Pain_Mono_11", "Death");
+        m_audioManager.AddSound("Sound/Voice_Male/Voice_Male_Hit/Voice_Male_V1_Hit_Short_Mono_11", "Hurt");
+        m_audioManager.AddSound("Sound/Voice_Male/Voice_Male_Hit/Voice_Male_V1_Hit_Short_Mono_13", "Hurt");
+        m_audioManager.AddSound("Sound/Voice_Male/Voice_Male_Hit/Voice_Male_V1_Hit_Short_Mono_09", "Hurt");
+        m_audioManager.AddSound("Sound/RPG_Essentials_Free/10_Battle_SFX/39_Block_03", "Block");
+        m_audioManager.AddSound("Sound/RPG_Essentials_Free/10_Battle_SFX/35_Miss_Evade_02", "Evade");
     }
 }

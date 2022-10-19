@@ -6,7 +6,7 @@ using UnityEngine;
 public class Sound
 {
     public string m_name;
-    public AudioClip[] m_clips;
+    public List<AudioClip> m_clips = null;
 
     [Range(0f, 1f)]
     public float volume = 1.0f;
@@ -15,20 +15,29 @@ public class Sound
     public Vector2 m_randomVolumeRange = new Vector2(1.0f, 1.0f);
     public Vector2 m_randomPitchRange = new Vector2(1.0f, 1.0f);
     
-    private AudioSource m_source;
+    private AudioSource m_source = null;
 
+    public Sound()
+    {
+        m_randomPitchRange = new Vector2(1.0f, 1.0f);
+        m_randomVolumeRange = new Vector2(1.0f, 1.0f);
+        m_clips = new List<AudioClip>();
+        pitch = 1.0f;
+        volume = 1.0f;
+        m_name = "";
+    }
     public void SetSource(AudioSource source)
     {
         m_source = source;
-        int randomClip = Random.Range(0, m_clips.Length - 1);
+        int randomClip = Random.Range(0, m_clips.Count - 1);
         m_source.clip = m_clips[randomClip];
     }
 
     public void Play()
     {
-        if(m_clips.Length > 1)
+        if(m_clips.Count > 1)
         {
-            int randomClip = Random.Range(0, m_clips.Length - 1);
+            int randomClip = Random.Range(0, m_clips.Count);
             m_source.clip = m_clips[randomClip];
         }
         m_source.volume = volume * Random.Range(m_randomVolumeRange.x, m_randomVolumeRange.y);
@@ -66,7 +75,7 @@ public class AudioManager_PrototypeHero : MonoBehaviour
             m_sounds[i].SetSource(go.AddComponent<AudioSource>());
         }
         //BGM.Add()
-        AddEffectSound("Character/Prototype_Hero_Demo/Audio/Footstep1.wav");
+        //AddEffectSound("Character/Prototype_Hero_Demo/Audio/Footstep1.wav", "Footstep");
     }
 
     public void PlaySound (string name)
@@ -83,30 +92,65 @@ public class AudioManager_PrototypeHero : MonoBehaviour
         Debug.LogWarning("AudioManager: Sound name not found in list: " + name);
     }
 
-    private void AddEffectSound(string path, string SoundCategory = "default")
+    public void AddSound(string path, string SoundCategory = "default")
     {
-        int targetIdx = -1;
-        for(int i=0; i< m_sounds.Count; i++)
+        AudioClip ClipFile = Resources.Load<AudioClip>(path);
+        if (ClipFile == null)
         {
-            if (m_sounds[i].m_name == SoundCategory)
-            {
-                targetIdx = i;
-                break;
-            }
+            Debug.Log("AddEffectSound Error: " + path + " File Is Not Valid");
+            return;
         }
 
-        if(targetIdx < 0)
-        {
+        int TargetIdx = GetSoundIdx(SoundCategory);
+        Instantiate(ClipFile);
 
+        if (TargetIdx < 0)
+        {
+            Sound _sound = new Sound();
+            GameObject go = new GameObject("Sound_" + SoundCategory);
+            go.transform.SetParent(transform);
+            _sound.m_name = SoundCategory;
+            _sound.m_clips.Add(ClipFile);
+            m_sounds.Add(_sound);
         }
         else
         {
-            //m_Effect[targetIdx].m_clips
+            if (GetClipIdx(SoundCategory, TargetIdx) > 0)
+            {
+                Debug.Log("The Client Already Has Sound Data:" + path);
+            }
+            else
+            {
+                m_sounds[TargetIdx].m_clips.Add(ClipFile);
+            }
         }
-        //Sound _sound = new Sound();
-        //AudioSource tmp = Instantiate(Resources.Load<AudioSource>(path));
-        //_sound.SetSource(tmp);
-        //_sound.m_name = tmp.name;
-        //m_sounds.SetValue(_sound, m_sounds.Length);
+    }
+
+    private int GetSoundIdx(string name)
+    {
+        int Idx = -1;
+        for (int i = 0; i < m_sounds.Count; i++)
+        {
+            if (m_sounds[i].m_name == name)
+            {
+                Idx = i;
+                break;
+            }
+        }
+        return Idx;
+    }
+
+    private int GetClipIdx(string name, int targetIdx)
+    {
+        int Idx = -1;
+        for (int i = 0; i < m_sounds[targetIdx].m_clips.Count; i++)
+        {
+            if (m_sounds[targetIdx].m_clips[i].name == name)
+            {
+                Idx = i;
+                break;
+            }
+        }
+        return Idx;
     }
 }
