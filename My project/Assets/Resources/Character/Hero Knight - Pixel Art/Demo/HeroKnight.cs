@@ -158,8 +158,10 @@ public class HeroKnight : MonoBehaviour {
         {
             m_rolling = true;
             m_animator.SetTrigger("Roll");
+            //m_body2d.velocity = new Vector2(m_facingDirection * m_rollForce, m_body2d.velocity.y);
+            Debug.Log("val (x,y) = (" + m_facingDirection * m_rollForce +"," + m_body2d.velocity.y + ")");
             m_body2d.velocity = new Vector2(m_facingDirection * m_rollForce, m_body2d.velocity.y);
-
+            Debug.LogError("=========================Current (x,y) = (" + m_body2d.velocity.x + "," + m_body2d.velocity.y + ")");
         }
             
 
@@ -189,6 +191,7 @@ public class HeroKnight : MonoBehaviour {
                 if(m_delayToIdle < 0)
                     m_animator.SetInteger("AnimState", 0);
         }
+        //Debug.Log("Current (x,y) = (" + m_body2d.velocity.x + "," + m_body2d.velocity.y + ")");
     }
 
     // Animation Events
