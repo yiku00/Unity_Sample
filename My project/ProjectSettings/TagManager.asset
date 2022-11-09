@@ -6,11 +6,12 @@ TagManager:
   tags:
   - Enemy
   - NPC
+  - PlayerAtt
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - PlayerAtt
   - Water
   - UI
   - Enemy
@@ -18,7 +19,7 @@ TagManager:
   - Player
   - PlayerDamaged
   - Obstruction
-  - 
+  - EnemyAtt
   - 
   - 
   - 

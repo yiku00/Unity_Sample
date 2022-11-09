@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using System;
+
 public class HeroKnight : MonoBehaviour {
 
     [SerializeField] float      m_speed = 4.0f;
@@ -27,6 +29,11 @@ public class HeroKnight : MonoBehaviour {
     private float               m_rollCurrentTime;
     private bool ClickLeft = false;
     private bool ClickRight = false;
+    public bool IsAttacking = false;
+    public Vector2 AttackBoxOffset = new Vector2(1, 1);
+    private Vector2 AttackBoxPosition;
+    public Vector2 AttackBoxSize = new Vector2(1, 1);
+
     private AudioManager_PrototypeHero m_audioManager;
     [SerializeField] GameObject m_RunStopDust;
     [SerializeField] GameObject m_JumpDust;
@@ -45,7 +52,6 @@ public class HeroKnight : MonoBehaviour {
 
         m_audioManager = AudioManager_PrototypeHero.instance;
 
-        
         m_RunStopDust = Resources.Load<GameObject>("Character/Prototype_Hero_Demo/Demo/RunStopDust");
         m_JumpDust = Resources.Load<GameObject>("Character/Prototype_Hero_Demo/Demo/JumpDust");
         m_LandingDust = Resources.Load<GameObject>("Character/Prototype_Hero_Demo/Demo/LandingDust");
@@ -54,21 +60,36 @@ public class HeroKnight : MonoBehaviour {
         Instantiate(m_LandingDust);
 
         SetupSoundFile();
+        AttackBoxPosition = transform.position;
+        AttackBoxOffset = new Vector2(1, 1);
+        AttackBoxSize = new Vector2(1, 1);
+        TimerManager.instance.SetTimer(() => {
+            m_currentAttack++;
+            if (m_currentAttack > 3)
+                m_currentAttack = 1;
 
+            if (m_timeSinceAttack > 1.0f)
+                m_currentAttack = 1;
+
+            m_animator.SetTrigger("Attack" + m_currentAttack);
+
+            // Reset timer
+            m_timeSinceAttack = 0.0f;
+        }, 5, 5, -1);
     }
 
     // Update is called once per frame
-    void Update ()
+    void Update()
     {
         // Increase timer that controls attack combo
         m_timeSinceAttack += Time.deltaTime;
 
         // Increase timer that checks roll duration
-        if(m_rolling)
+        if (m_rolling)
             m_rollCurrentTime += Time.deltaTime;
 
         // Disable rolling if timer extends duration
-        if(m_rollCurrentTime > m_rollDuration)
+        if (m_rollCurrentTime > m_rollDuration)
             m_rolling = false;
 
         //Check if character just landed on the ground
@@ -95,7 +116,7 @@ public class HeroKnight : MonoBehaviour {
             m_facingDirection = 1;
             m_body2d.velocity = new Vector2(inputX * m_speed, m_body2d.velocity.y);
         }
-            
+
         else if (inputX < 0)
         {
             GetComponent<SpriteRenderer>().flipX = true;
@@ -121,13 +142,13 @@ public class HeroKnight : MonoBehaviour {
             m_animator.SetBool("noBlood", m_noBlood);
             m_animator.SetTrigger("Death");
         }
-            
+
         //Hurt
         else if (Input.GetKeyDown("q") && !m_rolling)
             m_animator.SetTrigger("Hurt");
 
         //Attack
-        else if(Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f && !m_rolling)
+        else if (Input.GetMouseButtonDown(0) && m_timeSinceAttack > 0.25f && !m_rolling)
         {
             m_currentAttack++;
 
@@ -162,7 +183,7 @@ public class HeroKnight : MonoBehaviour {
             m_rolling = true;
             m_animator.SetTrigger("Roll");
             m_body2d.velocity = new Vector2(m_facingDirection * m_rollForce, m_body2d.velocity.y);
-            
+
         }
 
         else if (Input.GetKeyDown(KeyCode.C))
@@ -194,12 +215,27 @@ public class HeroKnight : MonoBehaviour {
         {
             // Prevents flickering transitions to idle
             m_delayToIdle -= Time.deltaTime;
-                if(m_delayToIdle < 0)
-                    m_animator.SetInteger("AnimState", 0);
+            if (m_delayToIdle < 0)
+                m_animator.SetInteger("AnimState", 0);
         }
-        //Debug.Log("Current (x,y) = (" + m_body2d.velocity.x + "," + m_body2d.velocity.y + ")");
-    }
 
+        AttackBoxPosition = new Vector2((transform.position.x + AttackBoxOffset.x) * m_facingDirection, transform.position.y + AttackBoxOffset.y);
+        if (IsAttacking)
+        {
+            Collider2D[] HitCheck = Physics2D.OverlapBoxAll(AttackBoxPosition, AttackBoxSize, 90f, LayerMask.GetMask("Enemy"));
+            if (HitCheck.Length > 0)
+            {
+                HitCheck[0].SendMessage("ApplyDamage", 5);
+                HitCheck[0].offset = AttackBoxOffset;
+            }
+        }
+
+    }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.white;
+        UnityEditor.Handles.DrawWireCube(AttackBoxPosition, AttackBoxSize);
+    }
     // Animation Events
     // Called in slide animation.
     void AE_SlideDust()
@@ -245,6 +281,7 @@ public class HeroKnight : MonoBehaviour {
     void AE_Attack()
     {
         m_audioManager.PlaySound("Attack");
+
     }
 
     void AE_footstep()
@@ -307,7 +344,7 @@ public class HeroKnight : MonoBehaviour {
     private void OnCollisionEnter2D(Collision2D collision)
     {
         
-        if(collision.gameObject.tag == "Enemy")
+        if(collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "EnemyAtt")
         {
             OnHit(collision);
         }

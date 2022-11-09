@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -35,27 +36,29 @@ public class Goblin : MonoBehaviour
         CurrtentPatrollIdx++;
     }
 
-    void AE_BackFlipStart()
-    {
-        Rigidbody2D m_body2d = GetComponent<Rigidbody2D>();
-        if (m_body2d == null)
-            return;
-
-        m_body2d.AddForce(new Vector2(m_MovementComp.GetDirection(), 0f) * 5f);
-
-    }
-
-    void AE_CutFront()
-    {
-        Rigidbody2D m_body2d = GetComponent<Rigidbody2D>();
-        if (m_body2d == null || m_MovementComp == null)
-            return;
-
-        m_body2d.AddForce(new Vector2(m_MovementComp.GetDirection(), 0f) * 100f);
-    }
-
     public void Attack2()
     {
         m_animator.Play("Attack2");
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+
+        if (collision.gameObject.tag == "PlayerAtt")
+        {
+            
+            OnHit(collision);
+        }
+    }
+
+    private void OnHit(Collision2D collision)
+    {
+
+        throw new NotImplementedException();
+    }
+
+    private void ApplyDamage(float dmg)
+    {
+        m_animator.Play("Hitted");
     }
 }
