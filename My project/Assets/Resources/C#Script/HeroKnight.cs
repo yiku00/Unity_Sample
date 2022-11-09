@@ -25,7 +25,8 @@ public class HeroKnight : MonoBehaviour {
     private float               m_delayToIdle = 0.0f;
     private float               m_rollDuration = 8.0f / 14.0f;
     private float               m_rollCurrentTime;
-
+    private bool ClickLeft = false;
+    private bool ClickRight = false;
     private AudioManager_PrototypeHero m_audioManager;
     [SerializeField] GameObject m_RunStopDust;
     [SerializeField] GameObject m_JumpDust;
@@ -92,17 +93,19 @@ public class HeroKnight : MonoBehaviour {
         {
             GetComponent<SpriteRenderer>().flipX = false;
             m_facingDirection = 1;
+            m_body2d.velocity = new Vector2(inputX * m_speed, m_body2d.velocity.y);
         }
             
         else if (inputX < 0)
         {
             GetComponent<SpriteRenderer>().flipX = true;
             m_facingDirection = -1;
+            m_body2d.velocity = new Vector2(inputX * m_speed, m_body2d.velocity.y);
         }
 
         // Move
-        if (!m_rolling )
-            m_body2d.velocity = new Vector2(inputX * m_speed, m_body2d.velocity.y);
+        //if (!m_rolling && inputX != 0)
+        //    m_body2d.velocity = new Vector2(inputX * m_speed, m_body2d.velocity.y);
 
         //Set AirSpeed in animator
         m_animator.SetFloat("AirSpeedY", m_body2d.velocity.y);
@@ -158,10 +161,8 @@ public class HeroKnight : MonoBehaviour {
         {
             m_rolling = true;
             m_animator.SetTrigger("Roll");
-            //m_body2d.velocity = new Vector2(m_facingDirection * m_rollForce, m_body2d.velocity.y);
-            Debug.Log("val (x,y) = (" + m_facingDirection * m_rollForce +"," + m_body2d.velocity.y + ")");
             m_body2d.velocity = new Vector2(m_facingDirection * m_rollForce, m_body2d.velocity.y);
-            Debug.LogError("=========================Current (x,y) = (" + m_body2d.velocity.x + "," + m_body2d.velocity.y + ")");
+            
         }
 
         else if (Input.GetKeyDown(KeyCode.C))
@@ -301,5 +302,27 @@ public class HeroKnight : MonoBehaviour {
         m_audioManager.AddSound("Sound/Voice_Male/Voice_Male_Hit/Voice_Male_V1_Hit_Short_Mono_09", "Hurt");
         m_audioManager.AddSound("Sound/RPG_Essentials_Free/10_Battle_SFX/39_Block_03", "Block");
         m_audioManager.AddSound("Sound/RPG_Essentials_Free/10_Battle_SFX/35_Miss_Evade_02", "Evade");
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        
+        if(collision.gameObject.tag == "Enemy")
+        {
+            OnHit(collision);
+        }
+    }
+
+    private void OnHit(Collision2D collision)
+    {
+        m_animator.SetTrigger("Hurt");
+        gameObject.layer = 9; //Layer Damaged
+        Invoke("resetLayer", 1.5f);
+        int dir = transform.position.x - collision.transform.position.x > 0 ? 1 : -1;
+        m_body2d.AddForce(new Vector2(dir, 1f) * 3f, ForceMode2D.Impulse);
+    }
+    private void resetLayer()
+    {
+        gameObject.layer = 8;//Layer Player
     }
 }

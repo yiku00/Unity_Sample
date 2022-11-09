@@ -28,15 +28,7 @@ public class NPC_Bearded : MonoBehaviour
     void Update()
     {
         
-        if(Mathf.Abs(m_body2d.velocity.x) > 0 )
-        {
-            m_animator.SetBool("Moving", true);
-        }
-        else
-        {
-            m_animator.SetBool("Moving", false);
-        }
-        Debug.Log(gameObject.transform.position.x);
+        //Debug.Log(gameObject.transform.position.x);
     }
 
     void SetPatroll()

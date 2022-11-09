@@ -5,7 +5,9 @@ using UnityEngine;
 public class Command
 {
     protected GameObject m_GO;
+    protected bool isComplete = false;
     public virtual void execute() { }
+    public bool getIsComplete() { return isComplete; }
 }
 
 public class JumpCommand : Command
@@ -23,12 +25,13 @@ public class JumpCommand : Command
         {
             return;
         }
-       Rigidbody2D RB = m_GO.GetComponent<Rigidbody2D>();
+        Rigidbody2D RB = m_GO.GetComponent<Rigidbody2D>();
         if(RB == null)
         {
             return;
         }
         RB.velocity = new Vector2(RB.velocity.x, jumpForce);
+        isComplete = true;
     }
 
     private void jump()
@@ -42,6 +45,7 @@ public class MoveX : Command
     private int m_facingDirection = 1;
     float m_speed = 1f;
     private Vector2 TargetLocation;
+    
 
     public MoveX(GameObject Actor, float Speed, Vector2 Destination)
     {
@@ -77,6 +81,7 @@ public class MoveX : Command
         if (Mathf.Abs(TargetLocation.x - m_GO.transform.position.x) < 0.25)
         {
             RB.velocity = new Vector2(0, 0);
+            isComplete = true;
             return;
         }
         else if (TargetLocation.x > m_GO.transform.position.x)
@@ -109,6 +114,7 @@ public class Stop : Command
         }
 
         RB.velocity = new Vector2(0f,0f);
+        isComplete = true;
     }
 }
 
@@ -118,7 +124,7 @@ public class AIMoveMentHandler : MonoBehaviour
     float m_speed = 1f;
     public Vector2 TargetLocation;
     Queue<Command> CommandQueue;
-    
+    int mdircteion = 0;
     // Start is called before the first frame update
 
     void Start()
@@ -149,14 +155,33 @@ public class AIMoveMentHandler : MonoBehaviour
             Stop StopCommand = new Stop(this.gameObject);
             CommandQueue.Enqueue(StopCommand);
         }
+
+        if (GetComponent<Animator>() != null)
+        {
+            GetComponent<Animator>().SetBool("Is Moving", Mathf.Abs(GetComponent<Rigidbody2D>().velocity.x) > 0);
+        }
+        mdircteion = GetComponent<SpriteRenderer>().flipX ? 1 : -1;
+
     }
 
     private void HandleCommand()
     {
         if (CommandQueue.Count > 0)
         {
-            Command dmp = CommandQueue.Dequeue();
+            Command dmp = CommandQueue.Peek();
             dmp.execute();
+            if (dmp.getIsComplete())
+                CommandQueue.Dequeue();
         }
+    }
+
+    public int GetDirection()
+    {
+        SpriteRenderer SR = GetComponent<SpriteRenderer>();
+
+        if (SR.flipX)
+            return -1; //역방향, 왼쪽
+        else
+            return 1; //정방향, 오른쪽
     }
 }

@@ -47,7 +47,7 @@ public class Timer : MonoBehaviour
             {
                 method();
                 FirstPlay = false;
-                Debug.Log("Timer Id:" + TimerId + " Is Activated");
+                //Debug.Log("Timer Id:" + TimerId + " Is Activated");
                 if(InitedLoopCount == 0)
                 {
                     UnbindTimer();
@@ -56,7 +56,7 @@ public class Timer : MonoBehaviour
             else if (Currentinterval <= 0)
             {
                 method();
-                Debug.Log("Timer Id:" + TimerId + " Is Activated");
+               //Debug.Log("Timer Id:" + TimerId + " Is Activated");
                 if (RemainLoopCount == 0)
                 {
                     UnbindTimer();
