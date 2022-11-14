@@ -153,7 +153,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 49468352}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.87, y: 0.1, z: 0.020756187}
+  m_LocalPosition: {x: 0.87, y: -2.6200001, z: 0.020756187}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -469,6 +469,7 @@ GameObject:
   - component: {fileID: 214802660}
   - component: {fileID: 214802665}
   - component: {fileID: 214802666}
+  - component: {fileID: 214802667}
   m_Layer: 6
   m_Name: Goblin
   m_TagString: Enemy
@@ -636,7 +637,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ceb1268a10ce504cb583fb5332de7d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 3
+  radius: 2.5
   angle: 45
   targetLayer:
     serializedVersion: 2
@@ -659,6 +660,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PatrollPoint: []
+  MyTimer: []
+--- !u!114 &214802667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214802657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 287898407da0e554b82480f75d67010d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Damage: 0
+  MaxHp: 0
+  CurrentHp: 0
+  IsAttacking: 0
+  CanBeDestroy: 1
+  AttackBoxOffset: {x: 1, y: 1}
+  AttackBoxSize: {x: 1, y: 1}
+  TargetLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &233685986
 GameObject:
   m_ObjectHideFlags: 0
@@ -761,7 +785,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 233685986}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.68, y: -0.07, z: 0}
+  m_LocalPosition: {x: -3.727, y: -0.328, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1001,7 +1025,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 537903276}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.352, y: -0.3, z: 0.020756187}
+  m_LocalPosition: {x: 3.352, y: -3.02, z: 0.020756187}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2260,7 +2284,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1493151471}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.15, y: -0.3, z: 0.020756187}
+  m_LocalPosition: {x: 2.15, y: -3.02, z: 0.020756187}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2556,6 +2580,28 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 6855557595897071052}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1917115205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 807341822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 287898407da0e554b82480f75d67010d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Damage: 0
+  MaxHp: 0
+  CurrentHp: 0
+  IsAttacking: 0
+  CanBeDestroy: 1
+  AttackBoxOffset: {x: 1, y: 1}
+  AttackBoxSize: {x: 1, y: 1}
+  TargetLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &1934890520
 GameObject:
   m_ObjectHideFlags: 0
@@ -2631,12 +2677,12 @@ PrefabInstance:
     - target: {fileID: 8413529789942519730, guid: a4b4a6d32bcb19248a754d6602ffc7e4,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -17.98
+      value: -17.811
       objectReference: {fileID: 0}
     - target: {fileID: 8413529789942519730, guid: a4b4a6d32bcb19248a754d6602ffc7e4,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.63
+      value: 1.266
       objectReference: {fileID: 0}
     - target: {fileID: 8413529789942519730, guid: a4b4a6d32bcb19248a754d6602ffc7e4,
         type: 3}

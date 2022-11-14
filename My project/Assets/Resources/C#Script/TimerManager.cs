@@ -79,6 +79,20 @@ public class Timer : MonoBehaviour
     }
 }
 
+public class TimerHandler
+{
+    private Timer Timer;
+    public void SetTimer(METHOD func, float dly = 0, float interv = 0, int LoopCnt = -1)
+    {
+        Timer = TimerManager.instance.SetTimer(func, dly, interv, LoopCnt);
+    }
+
+    public void DeleteTimer()
+    {
+        TimerManager.instance.DeleteTimer(Timer.GetTimerId());
+    }
+}
+
 public class TimerManager : MonoBehaviour
 {
     public static TimerManager instance;
@@ -110,13 +124,14 @@ public class TimerManager : MonoBehaviour
         
     }
 
-    public void SetTimer(METHOD func ,float dly =0,float interv = 0, int LoopCnt = -1)
+    public Timer SetTimer(METHOD func ,float dly =0,float interv = 0, int LoopCnt = -1)
     {
         Timer tmp = this.gameObject.AddComponent<Timer>();
         tmp.Init(func, dly, interv, TimerIdGenerated, LoopCnt);
         TimerIdGenerated++;
         //Debug.Log("Parsed Param: dly" + dly + " interv:" + interv + " TimerIdGenerated:" + TimerIdGenerated + " LoopCnt:" + LoopCnt);
         TimerAL.Add(tmp);
+        return tmp;
     }
 
     private Timer FindTimer(int id)
@@ -137,7 +152,13 @@ public class TimerManager : MonoBehaviour
 
         for(int i=0;i< TimerAL.Count;i++)
         {
-            if (TimerAL[i].GetTimerId() == id)TimerAL.RemoveAt(i);
+            if (TimerAL[i].GetTimerId() == id)
+            {
+                Timer tmp = TimerAL[i];
+                TimerAL.RemoveAt(i);
+                tmp.UnbindTimer();
+            }
+                
         }
     }
 

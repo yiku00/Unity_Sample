@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FieldOfView : MonoBehaviour
 {
-    public float radius = 3;
+    public float radius = 2.5f;
     [Range(1,360)]public float angle = 45f;
     public LayerMask targetLayer;
     public LayerMask obstructionLayer;

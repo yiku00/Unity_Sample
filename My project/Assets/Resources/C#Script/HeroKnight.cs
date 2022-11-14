@@ -27,14 +27,10 @@ public class HeroKnight : MonoBehaviour {
     private float               m_delayToIdle = 0.0f;
     private float               m_rollDuration = 8.0f / 14.0f;
     private float               m_rollCurrentTime;
-    private bool ClickLeft = false;
-    private bool ClickRight = false;
     public bool IsAttacking = false;
-    public Vector2 AttackBoxOffset = new Vector2(1, 1);
-    private Vector2 AttackBoxPosition;
-    public Vector2 AttackBoxSize = new Vector2(1, 1);
 
     private AudioManager_PrototypeHero m_audioManager;
+    private BattleHelper m_BattleHelper;
     [SerializeField] GameObject m_RunStopDust;
     [SerializeField] GameObject m_JumpDust;
     [SerializeField] GameObject m_LandingDust;
@@ -60,22 +56,15 @@ public class HeroKnight : MonoBehaviour {
         Instantiate(m_LandingDust);
 
         SetupSoundFile();
-        AttackBoxPosition = transform.position;
-        AttackBoxOffset = new Vector2(1, 1);
-        AttackBoxSize = new Vector2(1, 1);
-        TimerManager.instance.SetTimer(() => {
-            m_currentAttack++;
-            if (m_currentAttack > 3)
-                m_currentAttack = 1;
 
-            if (m_timeSinceAttack > 1.0f)
-                m_currentAttack = 1;
-
-            m_animator.SetTrigger("Attack" + m_currentAttack);
-
-            // Reset timer
-            m_timeSinceAttack = 0.0f;
-        }, 5, 5, -1);
+        m_BattleHelper = GetComponent<BattleHelper>();
+        if (m_BattleHelper)
+        {
+            m_BattleHelper.TargetLayer = LayerMask.GetMask("Enemy");
+            m_BattleHelper.Damage = 40f;
+            m_BattleHelper.InitHp(100f);
+            m_BattleHelper.CanBeDestroy = false;
+        }
     }
 
     // Update is called once per frame
@@ -219,23 +208,17 @@ public class HeroKnight : MonoBehaviour {
                 m_animator.SetInteger("AnimState", 0);
         }
 
-        AttackBoxPosition = new Vector2((transform.position.x + AttackBoxOffset.x) * m_facingDirection, transform.position.y + AttackBoxOffset.y);
-        if (IsAttacking)
-        {
-            Collider2D[] HitCheck = Physics2D.OverlapBoxAll(AttackBoxPosition, AttackBoxSize, 90f, LayerMask.GetMask("Enemy"));
-            if (HitCheck.Length > 0)
-            {
-                HitCheck[0].SendMessage("ApplyDamage", 5);
-                HitCheck[0].offset = AttackBoxOffset;
-            }
-        }
+    }
+    private void CharaOnDead()
+    {
 
     }
-    private void OnDrawGizmos()
+    private void ApplyDamage(DamageInfo Dmg)
     {
-        Gizmos.color = Color.white;
-        UnityEditor.Handles.DrawWireCube(AttackBoxPosition, AttackBoxSize);
+        m_BattleHelper.ApplyDamage(Dmg);
+        m_animator.SetBool("noBlood", true);
     }
+
     // Animation Events
     // Called in slide animation.
     void AE_SlideDust()
@@ -346,20 +329,13 @@ public class HeroKnight : MonoBehaviour {
         
         if(collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "EnemyAtt")
         {
-            OnHit(collision);
+            DamageInfo obj = new DamageInfo();
+            obj.damage = 10;
+            obj.DamagingObject = collision.collider;
+            m_animator.SetBool("noBlood", false);
+            m_BattleHelper.ApplyDamage(obj);
         }
     }
 
-    private void OnHit(Collision2D collision)
-    {
-        m_animator.SetTrigger("Hurt");
-        gameObject.layer = 9; //Layer Damaged
-        Invoke("resetLayer", 1.5f);
-        int dir = transform.position.x - collision.transform.position.x > 0 ? 1 : -1;
-        m_body2d.AddForce(new Vector2(dir, 1f) * 3f, ForceMode2D.Impulse);
-    }
-    private void resetLayer()
-    {
-        gameObject.layer = 8;//Layer Player
-    }
+
 }
